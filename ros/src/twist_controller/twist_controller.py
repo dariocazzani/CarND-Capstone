@@ -63,6 +63,7 @@ class Controller(object):
         brake = 0
 
         if linear_vel == 0. and current_vel < 0.1:
+            self.throttle_controller.reset()
             throttle = 0.
             brake = 400 #N*m - to hold the car in place if we are stopped at a light. Acceleration ~ 1m/s^2
 
