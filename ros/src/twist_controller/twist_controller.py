@@ -43,11 +43,11 @@ class Controller(object):
 
         current_vel = self.vel_lpf.filt(current_vel)
 
-        rospy.logwarn("Angular Vel: {0}".format(angular_vel))
-        rospy.logwarn("Target velocity: {0}".format(linear_vel))
-        rospy.logwarn("Target angular velocity: {0}\n".format(angular_vel))
-        rospy.logwarn("Current velocity: {0}".format(current_vel))
-        rospy.logwarn("Filtered velocity: {0}".format(self.vel_lpf.get()))
+        #rospy.logwarn("Angular Vel: {0}".format(angular_vel))
+        #rospy.logwarn("Target velocity: {0}".format(linear_vel))
+        #rospy.logwarn("Target angular velocity: {0}\n".format(angular_vel))
+        #rospy.logwarn("Current velocity: {0}".format(current_vel))
+        #rospy.logwarn("Filtered velocity: {0}".format(self.vel_lpf.get()))
 
         steering = self.yaw_controller.get_steering(linear_vel, angular_vel, current_vel)
 
@@ -59,7 +59,7 @@ class Controller(object):
         self.last_time = current_time
 
         throttle = self.throttle_controller.step(vel_error, sample_time)
-        rospy.logwarn("Throttle: {}".format(throttle))
+        #rospy.logwarn("Throttle: {}".format(throttle))
         brake = 0
 
         if linear_vel == 0. and current_vel < 0.1:
