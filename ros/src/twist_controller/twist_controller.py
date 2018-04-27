@@ -13,16 +13,19 @@ class Controller(object):
         # TODO: Implement
         self.yaw_controller = YawController(wheel_base, steer_ratio, 0.1, max_lat_accel, max_steer_angle)
 
-        kp = 0.2
-        ki = 0.05
-        kd = 0.
+        kp = 0.6
+        ki = 0.01
+        kd = 0.4
         mn = 0. # Minimum throttle value
-        mx = 0.2 # Maximum throttle value
+        mx = 0.3 # Maximum throttle value
         self.throttle_controller = PID(kp, ki, kd, mn, mx)
 
         tau = 0.5 # 1/(2pi*tau) = cutoff frequency
         ts = .02 # Sample time
         self.vel_lpf = LowPassFilter(tau, ts)
+	
+	tau = 0.01
+	self.throttle_lpf = LowPassFilter(tau, ts)
 
         self.vehicle_mass = vehicle_mass
         self.fuel_capacity = fuel_capacity
@@ -59,15 +62,17 @@ class Controller(object):
         self.last_time = current_time
 
         throttle = self.throttle_controller.step(vel_error, sample_time)
+	throttle = self.throttle_lpf.filt(throttle)
+
         #rospy.logwarn("Throttle: {}".format(throttle))
         brake = 0
 
         if linear_vel == 0. and current_vel < 0.1:
-            self.throttle_controller.reset()
+            #self.throttle_controller.reset()
             throttle = 0.
             brake = 400 #N*m - to hold the car in place if we are stopped at a light. Acceleration ~ 1m/s^2
 
-        elif throttle < .1 and vel_error < 0:
+        elif throttle < .01 and vel_error < 0:
             throttle = 0
             decel = max(vel_error, self.decel_limit)
             brake = abs(decel) * self.vehicle_mass*self.wheel_radius # Torque N*m
