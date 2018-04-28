@@ -85,7 +85,7 @@ class WaypointUpdater(object):
         closest_idx = self.get_closest_waypoint_idx()
         farthest_idx = closest_idx + LOOKAHEAD_WPS
         base_waypoints = self.base_lane.waypoints[closest_idx: farthest_idx]
-
+        #rospy.logwarn("stopline_wp_idx: {0}".format(self.stopline_wp_idx))
         if self.stopline_wp_idx == -1 or (self.stopline_wp_idx >= farthest_idx) or not self.stopline_wp_idx:
             lane.waypoints = base_waypoints
         else:
@@ -101,6 +101,7 @@ class WaypointUpdater(object):
 
             # Two waypoints back from line so front of car stops at line (reference is center of the car)
             stop_idx = max(self.stopline_wp_idx - closest_idx - 2, 0)
+            #rospy.logwarn("Stop_idx: {0}".format(stop_idx))
             dist = self.distance(waypoints, i, stop_idx)
             vel = math.sqrt(2 * MAX_DECEL * dist)
             if vel < 1.:
