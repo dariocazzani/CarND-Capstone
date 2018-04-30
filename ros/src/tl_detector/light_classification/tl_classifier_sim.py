@@ -50,13 +50,36 @@ class TLClassifier(object):
             scores=np.squeeze(scores)
             classes=np.squeeze(classes)
             classes=classes.astype(int)
+            
+            print('len of scores=', len(scores))
+            class_vote_green=0
+            class_vote_red=0
+            class_vote_yellow=0
+            
+            for i in range (len(scores)):
+                print('score= ',scores[i],'class= ', classes[i])
+                
+            
+            
 
-            if scores[0] > class_threshold:
-                if classes[0] == 1:
-                    return TrafficLight.GREEN
-                elif classes[0] == 2:
-                    return TrafficLight.RED
-                elif classes[0] == 3:
-                    return TrafficLight.YELLOW
-                else:
-                    return TrafficLight.UNKNOWN
+            for i in range(len(scores)):
+                if scores[i]>class_threshold:
+                    if classes[i]==1:
+                        class_vote_green+=1
+                    elif classes[i]==2:
+                        class_vote_red+=1
+                    elif classes[i]==3:
+                        class_vote_yellow+=1
+             
+                        
+            if class_vote_green>0:
+                print('light status= GREEN')
+                return TrafficLight.GREEN
+            elif class_vote_red>0:
+                print('light status= RED')
+                return TrafficLight.RED
+            elif class_vote_yellow>0:
+                print('light status= YELLOW')
+                return TrafficLight.YELLOW
+            print('light status=  UNKNOWN')
+            return TrafficLight.UNKNOWN

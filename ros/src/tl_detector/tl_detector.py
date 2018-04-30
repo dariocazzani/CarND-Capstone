@@ -12,7 +12,7 @@ import cv2
 import yaml
 from scipy.spatial import KDTree
 
-STATE_COUNT_THRESHOLD = 3
+STATE_COUNT_THRESHOLD = 1
 
 class TLDetector(object):
     def __init__(self):
@@ -135,6 +135,7 @@ class TLDetector(object):
 
         #Get classification
         light_state = self.light_classifier.get_classification(cv_image)
+        print(light_state)
         rospy.logwarn("Inference took: {:.3f} seconds - predicted: {}".format(time.time() - now, light_state))
         return light_state
 
