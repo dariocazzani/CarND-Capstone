@@ -16,16 +16,16 @@ class Controller(object):
         kp = 0.6
         ki = 0.01
         kd = 0.4
-        mn = 0. # Minimum throttle value
+        mn = decel_limit # Minimum throttle value
         mx = 0.3 # Maximum throttle value
         self.throttle_controller = PID(kp, ki, kd, mn, mx)
 
         tau = 0.5 # 1/(2pi*tau) = cutoff frequency
         ts = .02 # Sample time
         self.vel_lpf = LowPassFilter(tau, ts)
-	
-	tau = 0.01
-	self.throttle_lpf = LowPassFilter(tau, ts)
+
+        tau = 0.02
+        self.throttle_lpf = LowPassFilter(tau, ts)
 
         self.vehicle_mass = vehicle_mass
         self.fuel_capacity = fuel_capacity
@@ -62,19 +62,23 @@ class Controller(object):
         self.last_time = current_time
 
         throttle = self.throttle_controller.step(vel_error, sample_time)
-	throttle = self.throttle_lpf.filt(throttle)
+        throttle = self.throttle_lpf.filt(throttle)
 
-        #rospy.logwarn("Throttle: {}".format(throttle))
+        #rospy.logwarn("Throttle pre: {}, Vel error: {}".format(throttle, vel_error))
         brake = 0
-
+            
         if linear_vel == 0. and current_vel < 0.1:
-            #self.throttle_controller.reset()
-            throttle = 0.
-            brake = 400 #N*m - to hold the car in place if we are stopped at a light. Acceleration ~ 1m/s^2
-
-        elif throttle < .01 and vel_error < 0:
             throttle = 0
-            decel = max(vel_error, self.decel_limit)
-            brake = abs(decel) * self.vehicle_mass*self.wheel_radius # Torque N*m
-
+            brake = 400
+        else:
+            decel = throttle
+            if throttle < 0.01:
+                throttle = 0
+                
+            if decel < -0.1:
+                brake = abs(decel) * self.vehicle_mass*self.wheel_radius
+            else:
+                brake = 0
+        
+        #rospy.logwarn("Throttle: {}, Brake: {}, Steer: {}".format(throttle, brake, steering))
         return throttle, brake, steering
