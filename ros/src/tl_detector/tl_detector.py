@@ -12,7 +12,7 @@ import cv2
 import yaml
 from scipy.spatial import KDTree
 
-STATE_COUNT_THRESHOLD = 3
+STATE_COUNT_THRESHOLD = 2
 
 class TLDetector(object):
     def __init__(self):
@@ -58,7 +58,7 @@ class TLDetector(object):
         self.loop()
         
     def loop(self):
-        rate = rospy.Rate(1) # 1Hz
+        rate = rospy.Rate(2) # 1Hz
         while not rospy.is_shutdown():
             if self.has_image:
                 light_wp, state = self.process_traffic_lights()
