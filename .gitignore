@@ -4,3 +4,7 @@ build
 devel
 
 profile.tmp
+*.bag
+throttles.csv
+brakes.csv
+steers.csv

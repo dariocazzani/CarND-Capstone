@@ -58,5 +58,5 @@ class TLClassifier(object):
                     return TrafficLight.RED
                 elif classes[0] == 3:
                     return TrafficLight.YELLOW
-                else:
-                    return TrafficLight.UNKNOWN
+            else:
+                return TrafficLight.UNKNOWN
